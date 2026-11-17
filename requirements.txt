@@ -1,0 +1,15 @@
+
+#
+fastapi[standard]
+
+#Gérer la base SQLite
+sqlmodel
+
+#Authentification
+python-jose[cryptography]
+
+#chiffrement de mot de passe
+passlib[bcrypt]
+
+#Compatibilité auth, reception des donnees de formulaire
+python-multipart
