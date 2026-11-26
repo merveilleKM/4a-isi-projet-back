@@ -2,6 +2,7 @@ from typing import Optional
 from sqlmodel import SQLModel, Field
 import datetime
 from pydantic import model_validator
+from enum import Enum
 
 
 # Products 
@@ -89,3 +90,53 @@ class MenuRead(SQLModel):
     available_from: Optional[datetime.date]
     available_to: Optional[datetime.date]
     products: list[MenuProductRead]
+    
+# Order
+
+class OrderStatus(str, Enum):
+    pending = "pending"
+    in_progress = "in_progress"
+    completed = "completed"
+    delivered = "delivered"
+    cancelled = "cancelled"
+    no_show = "no_show"
+
+
+class OrderItemIn(SQLModel):
+    product_id: Optional[int] = None
+    menu_id: Optional[int] = None
+    quantity: int = Field(default=1, gt=0)
+
+    @model_validator(mode="after")
+    def exactly_one_target(self):
+        if (self.product_id is None) == (self.menu_id is None):
+            raise ValueError("Une ligne doit contenir soit product_id, soit menu_id (un seul des deux)")
+        return self
+
+
+class OrderCreate(SQLModel):
+    user_id: int  # TODO security : sera remplacé par l'utilisateur du token
+    pickup_date: datetime.date
+    items: list[OrderItemIn] = Field(min_length=1)
+
+
+class OrderStatusUpdate(SQLModel):
+    status: OrderStatus
+
+
+class OrderItemRead(SQLModel):
+    id: int
+    product_id: Optional[int]
+    menu_id: Optional[int]
+    name: str
+    quantity: int
+    unit_price: float
+
+
+class OrderRead(SQLModel):
+    id: int
+    user_id: int
+    pickup_date: datetime.date
+    status: str
+    items: list[OrderItemRead]
+    total: float

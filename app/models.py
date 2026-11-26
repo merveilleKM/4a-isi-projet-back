@@ -60,6 +60,7 @@ class OrderItem(SQLModel, table=True):
     product_id: Optional[int] = Field(default=None, foreign_key="products.id")
     menu_id: Optional[int] = Field(default=None, foreign_key="menus.id")
     quantity: int = Field(default=1)
+    unit_price: float          
 
 
 class ClosingDay(SQLModel, table=True):
