@@ -10,6 +10,7 @@ python-jose[cryptography]
 
 #chiffrement de mot de passe
 passlib[bcrypt]
+bcrypt<4.1
 
 #Compatibilité auth, reception des donnees de formulaire
 python-multipart
