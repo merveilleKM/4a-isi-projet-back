@@ -1,17 +1,17 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from app import models
-from database import create_db_and_tables
-from app.routers.users import users
+
+from app import models  # noqa: F401  (l'import suffit à enregistrer les tables)
+from app.database import create_db_and_tables
+from app.routers import users, products
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Code exécuté au démarrage
+    # Démarrage : création des tables
     create_db_and_tables()
     yield
-    # Code exécuté à l'arrêt (rien pour l'instant)
-    print("Arret")
+    # Arrêt : rien à nettoyer pour l'instant
 
 
 app = FastAPI(
@@ -22,6 +22,7 @@ app = FastAPI(
 )
 
 app.include_router(users.router)
+app.include_router(products.router)
 
 
 @app.get("/")
