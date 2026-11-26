@@ -3,7 +3,7 @@ from fastapi import FastAPI
 
 from app import models  # noqa: F401  (l'import suffit à enregistrer les tables)
 from app.database import create_db_and_tables
-from app.routers import users, products
+from app.routers import users, products,closing_days
 
 
 @asynccontextmanager
@@ -23,6 +23,7 @@ app = FastAPI(
 
 app.include_router(users.router)
 app.include_router(products.router)
+app.include_router(closing_days.router)
 
 
 @app.get("/")
