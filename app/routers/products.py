@@ -49,7 +49,15 @@ def update_product(
     product = session.get(Product, product_id)
     if product is None:
         raise HTTPException(status_code=404, detail="Produit introuvable")
-    product.sqlmodel_update(data.model_dump(exclude_unset=True))
+
+    fields = data.model_dump(exclude_unset=True)
+    product.sqlmodel_update(fields)
+
+    # Réapprovisionnement : si le stock redevient positif et que l'admin
+    # n'a pas précisé is_available, le produit redevient disponible.
+    if "stock" in fields and fields["stock"] > 0 and "is_available" not in fields:
+        product.is_available = True
+
     session.add(product)
     session.commit()
     session.refresh(product)
